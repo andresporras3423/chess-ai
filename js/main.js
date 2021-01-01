@@ -117,7 +117,10 @@ function evaluateBoard (move, prevSum, color)
 {
     var from = [8 - parseInt(move.from[1]), move.from.charCodeAt(0) - 'a'.charCodeAt(0)];
     var to = [8 - parseInt(move.to[1]), move.to.charCodeAt(0) - 'a'.charCodeAt(0)];
-
+    if(game.in_stalemate() || game.in_threefold_repetition()){
+        prevSum = 0;
+        return prevSum;
+    }
     // Change endgame behavior for kings
     if (prevSum < -1500)
     {
