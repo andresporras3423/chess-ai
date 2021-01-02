@@ -205,7 +205,7 @@ function minimax(game, depth, alpha, beta, isMaximizingPlayer, sum, color)
     
     var currMove;
     // Maximum depth exceeded or node is a terminal node (no children)
-    if (depth === 0 || children.length === 0)
+    if (depth <= 0 || children.length === 0)
     {
         return [null, sum]
     }
@@ -221,7 +221,9 @@ function minimax(game, depth, alpha, beta, isMaximizingPlayer, sum, color)
         // Note: in our case, the 'children' are simply modified game states
         var currPrettyMove = game.ugly_move(currMove);
         var newSum = evaluateBoard(currPrettyMove, sum, color);
-        var [childBestMove, childValue] = minimax(game, depth - 1, alpha, beta, !isMaximizingPlayer, newSum, color);
+        let tempDepth = depth;
+        if(game.in_check()) tempDepth++;
+        var [childBestMove, childValue] = minimax(game, tempDepth - 1, alpha, beta, !isMaximizingPlayer, newSum, color);
         
         game.undo();
     
