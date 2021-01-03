@@ -207,7 +207,7 @@ function minimax(game, depth, alpha, beta, isMaximizingPlayer, sum, color, total
     
     var currMove;
     // Maximum depth exceeded or node is a terminal node (no children)
-    if (depth <= 0 || children.length === 0 || total>=globalDepth*4)
+    if (depth <= 0 || children.length === 0 || total>=globalDepth+4)
     {
         return [null, sum]
     }
