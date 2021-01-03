@@ -10,6 +10,7 @@ var globalSum = 0                     // always from black's perspective. Negati
 var remainingPieces = 32
 var whiteSquareGrey = '#a9a9a9'
 var blackSquareGrey = '#696969'
+globalDepth = 0;
 
 var squareClass = 'square-55d63'
 var squareToHighlight = null
@@ -195,8 +196,9 @@ function evaluateBoard (move, prevSum, color)
  * Output:
  *  the best move at the root of the current subtree.
  */
-function minimax(game, depth, alpha, beta, isMaximizingPlayer, sum, color)
+function minimax(game, depth, alpha, beta, isMaximizingPlayer, sum, color, total)
 {
+    total++;
     positionCount++; 
     var children = game.ugly_moves({verbose: true});
     
@@ -205,7 +207,7 @@ function minimax(game, depth, alpha, beta, isMaximizingPlayer, sum, color)
     
     var currMove;
     // Maximum depth exceeded or node is a terminal node (no children)
-    if (depth <= 0 || children.length === 0)
+    if (depth <= 0 || children.length === 0 || total>=globalDepth*4)
     {
         return [null, sum]
     }
@@ -222,8 +224,8 @@ function minimax(game, depth, alpha, beta, isMaximizingPlayer, sum, color)
         var currPrettyMove = game.ugly_move(currMove);
         var newSum = evaluateBoard(currPrettyMove, sum, color);
         let tempDepth = depth;
-        if(game.in_check()) tempDepth++;
-        var [childBestMove, childValue] = minimax(game, tempDepth - 1, alpha, beta, !isMaximizingPlayer, newSum, color);
+        if(game.in_check() || 'captured' in currPrettyMove || currPrettyMove.flags.includes('p')) tempDepth++;
+        var [childBestMove, childValue] = minimax(game, tempDepth - 1, alpha, beta, !isMaximizingPlayer, newSum, color, total);
         
         game.undo();
     
@@ -342,9 +344,10 @@ function getBestMove (game, color, currSum) {
     {
         var depth = parseInt($('#search-depth-white').find(':selected').text());
     }
-
     var d = new Date().getTime();
-    var [bestMove, bestMoveValue] = minimax(game, depth, Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY, true, currSum, color);
+    globalDepth = depth;
+    var total = 0;
+    var [bestMove, bestMoveValue] = minimax(game, depth, Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY, true, currSum, color, total);
     var d2 = new Date().getTime();
     var moveTime = (d2 - d);
     var positionsPerS = (positionCount * 1000 / moveTime);
