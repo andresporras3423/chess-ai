@@ -207,7 +207,7 @@ function minimax(game, depth, alpha, beta, isMaximizingPlayer, sum, color, total
     
     var currMove;
     // Maximum depth exceeded or node is a terminal node (no children)
-    if (depth <= 0 || children.length === 0 || total>=globalDepth+4)
+    if (depth <= 0 || children.length === 0 || total>=globalDepth+6)
     {
         return [null, sum]
     }
@@ -345,7 +345,7 @@ function getBestMove (game, color, currSum) {
         var depth = parseInt($('#search-depth-white').find(':selected').text());
     }
     var d = new Date().getTime();
-    globalDepth = depth;
+    globalDepth = depth + 5- Math.ceil(Math.log(remainingPieces)/Math.log(2));
     var total = 0;
     var [bestMove, bestMoveValue] = minimax(game, depth, Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY, true, currSum, color, total);
     var d2 = new Date().getTime();
